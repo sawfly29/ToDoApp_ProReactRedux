@@ -3,13 +3,17 @@ import TodoListItem from '../todo-list-item';
 import './todo-list.css';//css сборщик автоматом подключает к страничке, где мы этот файл подключили.
 //важно, чтобы имена совпадали с именем компонента
 
-const TodoList = ({todos}) => {
+const TodoList = ({todos, onDeleted, onToggleImportant, onToggleDone}) => {
 
    
    const elements = todos.map((item) => {
     const {id, ...itemProps} = item
        return <li key = {id} className='list-group-item'>
-       <TodoListItem {...itemProps} />
+       <TodoListItem {...itemProps} 
+       onDeleted = {() => {onDeleted(id)}}
+       onToggleImportant = {() => {onToggleImportant(id)}}
+       onToggleDone = {() => {onToggleDone(id)}}
+       />
    </li>});
 //    const elements = todos.map((item) => {return <li>
 //        <TodoListItem label = {item.label} important={item.important} /> - проспредили компоненты
