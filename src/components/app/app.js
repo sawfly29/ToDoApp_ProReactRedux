@@ -14,13 +14,14 @@ state = {
     this.createTodoItem('Learn React!'),
     this.createTodoItem('Learn JS!'),
     this.createTodoItem('eat, sleep, play!')
-]
+],
+searchString: '',
+filter: '',
 }
 
 toggleProperty(arr, id, property){
   const indx = arr.findIndex((el) =>  el.id === id)// нашли индекс в массиве интересующего жлемента по индексу
     let newItem = {...arr[indx], [property]: !arr[indx][property]}
-
      return [...arr.slice(0, indx), newItem, ...arr.slice(indx + 1)] //нельзя стейт напрямую менять!
     
 }
@@ -63,25 +64,57 @@ addItem = (text) =>{
 //add item
 this.setState(({todoData}) => {
   const newArray = [...todoData, newItem]
-
 return {todoData: newArray}
 })
+}
+
+searchItem = (todoData, searchString) => {
+  if (searchString.length === 0){return todoData}
+  return todoData.filter((item) => {return item.label.toLowerCase().indexOf(searchString.toLowerCase()) > -1})
+}
+
+setSearchString = (str) => {
+  //console.log(this.state.todoData)
+  this.setState({searchString: str})
+}
+
+setFilter = (filterValue) => {
+  this.setState({filter: filterValue})
+  //console.log(this.state.filter)
+}
+
+filterItems = (todoData, filter) => {
+  if (filter === 'undone'){
+    return todoData.filter(item => {return item.done === false})
+  }
+  else if (filter === 'done'){
+    return todoData.filter(item => {return item.done === true})
+  }
+  else {
+    return todoData
+  }
 }
 
   render () {
     const doneItemsCount = this.state.todoData.filter(el => el.done).length
     const toDoItemsCount = this.state.todoData.filter(el => !el.done).length
-    
-    
+    const {todoData, searchString, filter} = this.state;
+
+    const visibleItems = this.searchItem(todoData, searchString)//items after searching
+
+    const filteredItems = this.filterItems(visibleItems, filter);
+
+
+
     return (
     <div className="todo-app">
     <AppHeader toDo={toDoItemsCount} done={doneItemsCount} />
     <div className="top-panel d-flex">
-      <SearchPanel />
-      <ItemStatusFilter />
+      <SearchPanel onSearch = {this.setSearchString} />
+      <ItemStatusFilter setFilter = {this.setFilter} />
     </div>
 
-    <TodoList todos={this.state.todoData} onDeleted = {this.deleteItem} onToggleImportant = {this.onToggleImportant} onToggleDone = {this.onToggleDone} />
+    <TodoList todos={filteredItems} onDeleted = {this.deleteItem} onToggleImportant = {this.onToggleImportant} onToggleDone = {this.onToggleDone} />
     <AddTodo onAdding = {this.addItem} />
   </div>
   )}  

@@ -13,7 +13,7 @@ class AddTodo extends React.Component {
 
     onFormSubmit = (e) => {
       e.preventDefault();
-      console.log(this.props.onAdding(this.state.label))
+      this.props.onAdding(this.state.label)
       this.setState({label: ''})
     }
 
